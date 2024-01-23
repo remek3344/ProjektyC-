@@ -1,0 +1,4 @@
+Imie: adm
+Nazwisko: name
+Wiek: 14
+Rozmiar buta: 44
