@@ -1,109 +1,171 @@
-#include <fstream>
 #include <iostream>
+#include <fstream>
+#include <string>
+
 using namespace std;
 
-void sprawdz(string nazwiskoDoSprawdzenia)
+struct Osoba
 {
-    string nazwisko, imie;
-    int index = 1;
-    bool czyJest = false; 
-    fstream plik;
-    plik.open("bazaPelna1.txt", ios::in);
-    if (plik.good())
-    {
-        while (plik >> imie >> nazwisko) 
-        {
-            if (nazwisko == nazwiskoDoSprawdzenia)
-            {
-                czyJest = true;
-                cout << imie << " " << nazwisko << " ";
-                int wiek, numerButa;
-                plik >> wiek >> numerButa;
-                cout << wiek << " " << numerButa << endl;
-            }
-        }
-        plik.close();
-    }
-    else
-    {
-        cout << "Nie udalo sie otworzyc pliku";
-    }
-
-    if (!czyJest)
-    {
-        cout << "Nikogo nie ma" << endl;
-    }
-}
-
-struct osoba
-{
+    int ID;
     string imie;
     string nazwisko;
     int wiek;
-    int nrButa;
+    int numerbuta;
 };
 
-int main()
+void Dodajid(Osoba osoba)
 {
-    int podana1;
-    cout << "Podaj 1, aby umożliwić dodanie nowego elementu: ";
-    cin >> podana1;
-    if (podana1 == 1)
+    ofstream plik("baza3.txt", ios::app);
+    if (plik.is_open())
     {
-        string imie, nazwisko;
-        int wiek, numerButa;
-        cout << "Podaj imie, nazwisko, wiek i numer buta: ";
-        cin >> imie >> nazwisko >> wiek >> numerButa;
-        fstream plik;
-        plik.open("bazaPelna1.txt", ios::out | ios::app);
-        if (plik.good())
-        {
-            plik << imie << " " << nazwisko << " " << wiek << " " << numerButa << endl;
-            plik.close();
-        }
-        else
-        {
-            cout << "Nie udalo sie otworzyc pliku";
-            return 1; 
-        }
-    }
-
-    fstream plik;
-    plik.open("bazaPelna1.txt", ios::in);
-    if (plik.good())
-    {
-        int liczbaOsob = 0;
-        string temp;
-        while (plik >> temp) 
-        {
-            liczbaOsob++;
-        }
-        plik.clear(); 
-        plik.seekg(0, ios::beg); 
-
-        osoba *baza = new osoba[liczbaOsob / 4]; 
-
-        for (int i = 0; i < liczbaOsob / 4; i++)
-        {
-            plik >> baza[i].imie >> baza[i].nazwisko >> baza[i].wiek >> baza[i].nrButa;
-        }
-
-        cout << "Dane z pliku: " << endl;
-        for (int i = 0; i < liczbaOsob / 4; i++)
-        {
-            cout << baza[i].imie << " " << baza[i].nazwisko << " " << baza[i].wiek << " " << baza[i].nrButa << endl;
-        }
-
-        delete[] baza; 
+        plik << osoba.ID << " " << osoba.imie << " " << osoba.nazwisko << " " << osoba.wiek << " " << osoba.numerbuta << endl;
+        cout << "Dodano informacje do pliku." << endl;
         plik.close();
     }
     else
     {
-        cout << "Nie udalo sie otworzyc pliku";
-        return 1; 
+        cout << "Blad otwarcia pliku." << endl;
     }
+}
 
-    sprawdz("Kowalski");
+void Usunid(int ID)
+{
+    ifstream plik1("baza3.txt");
+    ofstream plik2("temp.txt");
+    if (plik1.is_open() && plik2.is_open())
+    {
+        Osoba osoba;
+        while (plik1 >> osoba.ID >> osoba.imie >> osoba.nazwisko >> osoba.wiek >> osoba.numerbuta)
+        {
+            if (osoba.ID != ID)
+            {
+                plik2 << osoba.ID << " " << osoba.imie << " " << osoba.nazwisko << " " << osoba.wiek << " " << osoba.numerbuta << endl;
+            }
+        }
+        plik1.close();
+        plik2.close();
+        remove("baza3.txt");
+        rename("temp.txt", "baza3.txt");
+        cout << "Usunieto informacje z pliku." << endl;
+    }
+    else
+    {
+        cout << "Blad otwarcia pliku." << endl;
+    }
+}
+
+void Edytujid(int ID)
+{
+    ifstream plik1("baza3.txt");
+    ofstream plik2("temp.txt");
+    if (plik1.is_open() && plik2.is_open())
+    {
+        Osoba osoba;
+        while (plik1 >> osoba.ID >> osoba.imie >> osoba.nazwisko >> osoba.wiek >> osoba.numerbuta)
+        {
+            if (osoba.ID == ID)
+            {
+                cout << "Podaj nowe dane dla osoby po ID " << ID << ":" << endl;
+                cout << "Nowe imie: ";
+                cin >> osoba.imie;
+                cout << "Nowe nazwisko: ";
+                cin >> osoba.nazwisko;
+                cout << "Nowy wiek: ";
+                cin >> osoba.wiek;
+                cout << "Nowy numer buta: ";
+                cin >> osoba.numerbuta;
+            }
+            plik2 << osoba.ID << " " << osoba.imie << " " << osoba.nazwisko << " " << osoba.wiek << " " << osoba.numerbuta << endl;
+        }
+        plik1.close();
+        plik2.close();
+        remove("baza3.txt");
+        rename("temp.txt", "baza3.txt");
+        cout << "Zaktualizowano informacje w pliku." << endl;
+    }
+    else
+    {
+        cout << "Blad otwarcia pliku." << endl;
+    }
+}
+
+int main()
+{
+    int opcja;
+    cout<<"Modyfikacja"<<endl;
+    cout << "Co chcesz zrobic?" << endl;
+    cout << "1. Dodaj do pliku" << endl;
+    cout << "2. Usun z pliku" << endl;
+    cout << "3. Edytuj po ID" << endl;
+    cout << "Wybierz opcje: ";
+    cin >> opcja;
+
+    switch (opcja)
+    {
+    case 1:
+    {
+        Osoba nowaOsoba;
+        cout << "Podaj ID: ";
+        cin >> nowaOsoba.ID;
+        cout << "Podaj imie: ";
+        cin >> nowaOsoba.imie;
+        cout << "Podaj nazwisko: ";
+        cin >> nowaOsoba.nazwisko;
+        cout << "Podaj wiek: ";
+        cin >> nowaOsoba.wiek;
+        cout << "Podaj numer buta: ";
+        cin >> nowaOsoba.numerbuta;
+        Dodajid(nowaOsoba);
+        break;
+    }
+    case 2:
+    {
+        int usuwanie;
+        cout << "Podaj ID osoby do usuniecia: ";
+        cin >> usuwanie;
+        Usunid(usuwanie);
+        break;
+    }
+    case 3:
+    {
+        int edycja;
+        cout << "Podaj ID osoby do edycji: ";
+        cin >> edycja;
+        Edytujid(edycja);
+        break;
+    }
+    default:
+        cout << "Nieprawidlowa opcja." << endl;
+    }
 
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* używam remove() do usunięcia oryginalnego pliku "baza3.txt" po edycj
+i lub
+usunięciu danych, a następnie używam rename() do zmiany nazwy pliku tymczasowego
+ "temp.txt" na "baza3.txt", aby zastąpić oryginalny plik nowymi danymi.*/
