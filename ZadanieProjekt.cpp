@@ -28,6 +28,7 @@ void Dodajid(Osoba osoba)
     }
 }
 
+
 void Usunid(int ID)
 {
     ifstream plik1("baza3.txt");

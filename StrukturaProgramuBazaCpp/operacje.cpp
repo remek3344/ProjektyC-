@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-
 struct Osoba
 {
   int id;
@@ -10,7 +9,6 @@ struct Osoba
   int wiek;
   int numerButa;
 };
-
 void wypisz(Osoba *osoby, int dlugosc)
 {
   for (int i = 0; i < dlugosc; i++)
@@ -22,6 +20,17 @@ void wypisz(Osoba *osoby, int dlugosc)
     cout << "Number buta:" << osoby[i].numerButa << endl;
     cout << "==========" << endl;
   }
+}
+
+void wypiszJednaOsobe(Osoba osoba)
+{
+
+  cout << "Id:" << osoba.id << endl;
+  cout << "Imie:" << osoba.imie << endl;
+  cout << "Nazwisko:" << osoba.nazwisko << endl;
+  cout << "Wiek:" << osoba.wiek << endl;
+  cout << "Number buta:" << osoba.numerButa << endl;
+  cout << "==========" << endl;
 }
 
 int wczytajDlugosc()
@@ -43,7 +52,8 @@ int wczytajDlugosc()
     cout << "Blad";
   }
 
-  if(temp == ""){
+  if (temp == "")
+  {
     return 0;
   }
 
@@ -263,6 +273,77 @@ void sortuj()
   zapisz(osoby, dlugosc);
 }
 
+void przeszukaj()
+{
+  int dlugosc = wczytajDlugosc();
+  Osoba *osoby = new Osoba[dlugosc];
+  wczytaj(osoby);
+  char rodzajPrzeszukiwania;
+
+  cout << "wpisz w jesli chcesz przeszukac po wieku, b jesli po numerze buta, i jesli po imieniu, n jesli po nazwisku" << endl;
+  cin >> rodzajPrzeszukiwania;
+
+  if (rodzajPrzeszukiwania == 'i' || rodzajPrzeszukiwania == 'n')
+  {
+    string wartosc;
+    cout << "Podaj wartośc do porówania" << endl;
+    cin >> wartosc;
+
+    if (rodzajPrzeszukiwania == 'i')
+    {
+      for (int i = 0; i < dlugosc; i++)
+      {
+        if (wartosc == osoby[i].imie)
+        {
+          wypiszJednaOsobe(osoby[i]);
+        }
+      }
+    }
+    else if (rodzajPrzeszukiwania == 'n')
+    {
+      for (int i = 0; i < dlugosc; i++)
+      {
+        if (wartosc == osoby[i].nazwisko)
+        {
+          wypiszJednaOsobe(osoby[i]);
+        }
+      }
+    }
+    else
+    {
+      cout << "Bledna operacja" << endl;
+    }
+  }
+  else
+  {
+    int wartosc;
+    cout << "Podaj wartośc do porówania" << endl;
+    
+    cin >> wartosc;
+
+    if (rodzajPrzeszukiwania == 'w')
+    {
+      for (int i = 0; i < dlugosc; i++)
+      {
+        if (wartosc == osoby[i].wiek)
+        {
+          wypiszJednaOsobe(osoby[i]);
+        }
+      }
+    }
+    else if (rodzajPrzeszukiwania == 'b')
+    {
+      for (int i = 0; i < dlugosc; i++)
+      {
+        if (wartosc == osoby[i].numerButa)
+        {
+          wypiszJednaOsobe(osoby[i]);
+        }
+      }
+    }
+  }
+}
+
 void dodajOsobe()
 {
   int dlugosc = wczytajDlugosc();
@@ -350,69 +431,4 @@ void usunOsobe()
   }
 
   zapisz(osoby, dlugosc - 1);
-}
-
-
-
-void szukaj()
-{
-  int dlugosc = wczytajDlugosc();
-  Osoba *osoby = new Osoba[dlugosc];
-  wczytaj(osoby);
-  char rodzajSortowania;
-
-  cout << "Wypisz " << endl;
-  cin >> rodzajSortowania;
-
-  if (rodzajSortowania == 'w')
-  {
-    sortujPoWieku(osoby, dlugosc);
-  }
-  else if (rodzajSortowania == 'b')
-  {
-    sortujPoNumerzeButa(osoby, dlugosc);
-  }
-  else if (rodzajSortowania == 'i')
-  {
-    sortujPoImieniu(osoby, dlugosc);
-  }
-  else if (rodzajSortowania == 'n')
-  {
-    sortujPoNazwisku(osoby, dlugosc);
-  }
-  else
-  {
-    cout << "Nie poprawna operacja" << endl;
-  }
-
-  zapisz(osoby, dlugosc);
-}
-
-int main()
-{
-  cout << "Kliknij d jesli chcesz dodac osobe, m jesli chcesz zmodyfikowac, u jesli chcesz usunac, s jesli chcesz posortowac:" << endl;
-  char operacja;
-  cin >> operacja;
-
-  if (operacja == 'd')
-  {
-    dodajOsobe();
-  }
-  else if (operacja == 'm')
-  {
-    zmodyfikujOsobe();
-  }
-  else if (operacja == 'u')
-  {
-    usunOsobe();
-  }
-  else if (operacja == 's')
-  {
-    sortuj();
-  }
-  else
-  {
-    cout << "Nieznana operacja" << endl;
-  }
-  return 0;
 }
